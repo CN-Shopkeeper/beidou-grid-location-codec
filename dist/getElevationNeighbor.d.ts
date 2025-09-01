@@ -7,7 +7,7 @@ export default function getElevationNeighbor(
   offset: -1 | 1,
   level?: number
 ): string | null;
-export declare type Parts = {
+export type Parts = {
   a0: number;
   a1: number;
   a2: number;
