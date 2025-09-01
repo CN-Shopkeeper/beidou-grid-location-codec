@@ -1,4 +1,4 @@
-declare type LngLat = {
+type LngLat = {
   lngDegree: number;
   lngMinute?: number;
   lngSecond?: number;
@@ -8,15 +8,15 @@ declare type LngLat = {
   latSecond?: number;
   latDirection?: LatDirection;
 };
-declare type LngLatEle = LngLat & {
+type LngLatEle = LngLat & {
   elevation: number;
 };
-declare type DecodeOption = {
+type DecodeOption = {
   form: "decimal" | "dms";
 };
-declare type LngDirection = "W" | "E";
-declare type LatDirection = "S" | "N";
-declare type PoleGrid = {
+type LngDirection = "W" | "E";
+type LatDirection = "S" | "N";
+type PoleGrid = {
   isPoint: boolean;
   lngSize?: number;
   latSize: number;

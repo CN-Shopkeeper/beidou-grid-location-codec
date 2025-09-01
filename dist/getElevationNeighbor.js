@@ -18,7 +18,7 @@ function getElevationNeighbor(codeElevation, offset, level) {
       throw new Error("编码长度错误！");
     }
   }
-  const parts = parseGridCode(codeElevation, level);
+  const parts = parseGridCode(codeElevation);
   switch (level) {
     case 0:
       handleA0(parts, offset);
@@ -55,7 +55,7 @@ function getElevationNeighbor(codeElevation, offset, level) {
 }
 exports.default = getElevationNeighbor;
 // 解析网格码字符串为数值对象
-function parseGridCode(G, level) {
+function parseGridCode(G) {
   if (G.length < 12) {
     G = G.padEnd(12, "0");
   }
@@ -67,10 +67,10 @@ function parseGridCode(G, level) {
     a1: a1,
     a2: a2,
     a3: parseInt(G[3], 8),
-    a4: parseInt(G[4], 10),
+    a4: parseInt(G[4], 2),
     a5: parseInt(G[5], 16),
     a6: parseInt(G[6], 16),
-    a7: parseInt(G[7], 10),
+    a7: parseInt(G[7], 2),
     a8: parseInt(G[8], 8),
     a9: parseInt(G[9], 8),
     a10: parseInt(G[10], 8),
@@ -84,10 +84,10 @@ function encodeGridCode(parts, level) {
     parts.a1.toString(10),
     parts.a2.toString(10),
     parts.a3.toString(8),
-    parts.a4.toString(10),
-    parts.a5.toString(15).toUpperCase(),
-    parts.a6.toString(15).toUpperCase(),
-    parts.a7.toString(10),
+    parts.a4.toString(2),
+    parts.a5.toString(16).toUpperCase(),
+    parts.a6.toString(16).toUpperCase(),
+    parts.a7.toString(2),
     parts.a8.toString(8),
     parts.a9.toString(8),
     parts.a10.toString(8),
@@ -165,6 +165,7 @@ function handleA7(parts, delta) {
     handleA6(parts, -1);
   }
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleA8to11(parts, m, delta) {
   const idx = m;
   const value = parts[`a${idx}`] + delta;
@@ -179,6 +180,7 @@ function handleA8to11(parts, m, delta) {
   }
 }
 // 通用进位处理
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function carry(parts, m, delta) {
   if (m < 0) return;
   switch (m) {
