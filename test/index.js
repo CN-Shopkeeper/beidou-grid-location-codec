@@ -116,17 +116,17 @@ function offset(codeEle, offset) {
   }
   return codeEle;
 }
-console.log("offset +3:", offset(code, +3), offset(code, +3) === "000000100");
-console.log("offset +2:", offset(code, +2) === "000000017");
-console.log("offset +1:", offset(code, +1, 7) === "000000016");
-console.log("offset -1:", offset(code, +1, 7) === "000000016");
-console.log("offset +2:", offset(code, +2) === "000000017");
-console.log("offset -5:", offset(code, -5) === "000000010");
-console.log("offset -6:", offset(code, -6) === "000000007");
-console.log("offset -7:", offset(code, -7) === "000000006");
-console.log("offset -13:", offset(code, -13) === "000000000");
+console.log("000000015 +3:", offset(code, +3) === "000000100");
+console.log("000000015 +2:", offset(code, +2) === "000000017");
+console.log("000000015 +1:", offset(code, +1, 7) === "000000016");
+console.log("000000015 -1:", offset(code, +1, 7) === "000000016");
+console.log("000000015 +2:", offset(code, +2) === "000000017");
+console.log("000000015 -5:", offset(code, -5) === "000000010");
+console.log("000000015 -6:", offset(code, -6) === "000000007");
+console.log("000000015 -7:", offset(code, -7) === "000000006");
+console.log("000000015 -13:", offset(code, -13) === "000000000");
 console.log(
-  "offset -14:",
+  "000000015 -14:",
   offset(code, -14) === "100000000" //地面之下一个网格
 );
 
@@ -136,3 +136,25 @@ console.log("012 -1", offset(code2, -1) == "011");
 console.log("012 +30", offset(code2, 30) == "042");
 console.log("012 -12", offset(code2, -12) == "000");
 console.log("012 -13", offset(code2, -13) == "100");
+
+const code3 = "000709F15376";
+console.log(
+  "000709F15376 +1",
+  Codec3D.getNeighbor(code3, +1) == "000709F15377"
+);
+console.log(
+  "000709F15376 -1",
+  Codec3D.getNeighbor(code3, -1) == "000709F15375"
+);
+
+const code4 = "000301E";
+console.log("000301E +1", Codec3D.getNeighbor(code4, +1) == "0003020");
+
+console.log(
+  "000301E上方网格编码是0003020: ",
+  Codec3D.encodeElevation(Codec3D.decodeElevation("000301E") + 127)
+);
+console.log(
+  Codec3D.decodeElevation("000301E") - Codec3D.decodeElevation("000301D"),
+  Codec3D.decodeElevation("0003020") - Codec3D.decodeElevation("000301E")
+);
