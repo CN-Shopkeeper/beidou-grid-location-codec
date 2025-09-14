@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.1.16
+
+- Add GitHub repository link
+
 ### v1.1.15
 
 - Fixed the issue where the 3D encoding did not comply with the specifications. Now, according to the specifications, the 2D and height encoding are cross combined
