@@ -1,7 +1,3 @@
-/**
- * 根据GBT+39409-2020附录C.5开发
- */
-export declare const elevationCodeLengthAtLevel: number[];
 export default function getElevationNeighbor(
   codeElevation: string,
   offset: -1 | 1,

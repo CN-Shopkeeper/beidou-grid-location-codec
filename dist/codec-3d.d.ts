@@ -4,9 +4,10 @@ declare class Codec3D {
    * 对大地坐标进行编码
    * @param lngLatEle 大地坐标，类型为 LngLat & number
    * @param r 地球长半轴，默认取6378137m
+   * @param level 编码等级
    * @returns 32位的北斗三维网格位置码
    */
-  static encode(lngLatEle: LngLatEle, r?: number): string;
+  static encode(lngLatEle: LngLatEle, r?: number, level?: number): string;
   /**
    * 对高程进行编码
    * @param elevation 高程，单位米
@@ -25,7 +26,8 @@ declare class Codec3D {
   static decode(
     code: string,
     decodeOption?: DecodeOption,
-    r?: number
+    r?: number,
+    level?: number
   ): LngLatEle;
   /**
    * 对高程方向编码解码

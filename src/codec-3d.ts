@@ -1,6 +1,10 @@
 import { LngLatEle, DecodeOption } from "./type";
 import Codec2D from "./codec-2d";
-import { elevationParams } from "./data";
+import {
+  codeLengthAtLevel,
+  elevationCodeLengthAtLevel,
+  elevationParams
+} from "./data";
 import getElevationNeighbor from "./getElevationNeighbor";
 
 class Codec3D {
@@ -8,14 +12,31 @@ class Codec3D {
    * 对大地坐标进行编码
    * @param lngLatEle 大地坐标，类型为 LngLat & number
    * @param r 地球长半轴，默认取6378137m
+   * @param level 编码等级
    * @returns 32位的北斗三维网格位置码
    */
-  static encode(lngLatEle: LngLatEle, r = 6378137): string {
+  static encode(lngLatEle: LngLatEle, r = 6378137, level = 10): string {
+    if (level < 1 || level > 10) {
+      throw new Error("Codec3D.encode: 等级应该在1~10之间");
+    }
     // 计算二维网格位置码，20位
-    const code2D = Codec2D.encode(lngLatEle);
+    const code2D = Codec2D.encode(lngLatEle, level);
     // 计算高程方向编码，12位
-    const codeEle = this.encodeElevation(lngLatEle.elevation, r);
-    return code2D + codeEle;
+    const codeEle = this.encodeElevation(lngLatEle.elevation, r, level);
+    let codeResult = code2D[0] + codeEle[0];
+    for (let i = 1; i <= level; i++) {
+      // 拼接二维
+      codeResult += code2D.substring(
+        codeLengthAtLevel[i - 1],
+        codeLengthAtLevel[i]
+      );
+      // 拼接高程
+      codeResult += codeEle.substring(
+        elevationCodeLengthAtLevel[i - 1],
+        elevationCodeLengthAtLevel[i]
+      );
+    }
+    return codeResult;
   }
 
   /**
@@ -70,14 +91,30 @@ class Codec3D {
   static decode(
     code: string,
     decodeOption: DecodeOption = { form: "decimal" },
-    r = 6378137
+    r = 6378137,
+    level = 10
   ): LngLatEle {
-    if (code.length !== 32) {
-      throw new Error("编码长度不符合");
+    if (level < 1 || level > 10) {
+      throw new Error("Codec3D.decode: 等级应该在1~10之间");
+    }
+    const expectedCodeLength =
+      codeLengthAtLevel[level] + elevationCodeLengthAtLevel[level];
+    if (code.length !== expectedCodeLength) {
+      throw new Error("Codec3D.decode: 编码长度不符合");
     }
     // 截取字符串
-    const code2D = code.substring(0, 20);
-    const codeEle = code.substring(20, 32);
+    let code2D = code[0];
+    let codeEle = code[1];
+    for (let i = 1; i <= level; i++) {
+      code2D += code.substring(
+        codeLengthAtLevel[i - 1] + elevationCodeLengthAtLevel[i - 1],
+        codeLengthAtLevel[i] + elevationCodeLengthAtLevel[i - 1]
+      );
+      codeEle += code.substring(
+        codeLengthAtLevel[i] + elevationCodeLengthAtLevel[i - 1],
+        codeLengthAtLevel[i] + elevationCodeLengthAtLevel[i]
+      );
+    }
     // 分别解码
     const lngLat = Codec2D.decode(code2D, decodeOption);
     const elevation = this.decodeElevation(codeEle, r);
@@ -123,6 +160,7 @@ class Codec3D {
       Math.pow(1 + theta0 * (Math.PI / 180), n * (theta / theta0)) * r - r;
     return h;
   }
+
   /**
    * 根据高度编码计算上（下）一个高度编码
    * @param codeEle 高程方向编码

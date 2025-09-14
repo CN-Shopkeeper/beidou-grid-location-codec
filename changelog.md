@@ -1,8 +1,16 @@
 ## Changelog
 
+### v1.1.15
+
+- Fixed the issue where the 3D encoding did not comply with the specifications. Now, according to the specifications, the 2D and height encoding are cross combined
+
+### v1.1.14
+
+- Fix bug in getElevationNeighbor which leads to individual grid height error
+
 ### v1.1.13
 
-- add Codec3D.getNeighbors
+- Add Codec3D.getNeighbors
 
 ### v1.1.12
 

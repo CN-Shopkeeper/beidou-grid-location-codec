@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.elevationCodeLengthAtLevel = void 0;
+exports.default = getElevationNeighbor;
 /**
  * 根据GBT+39409-2020附录C.5开发
  */
-exports.elevationCodeLengthAtLevel = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const data_1 = require("./data");
 function getElevationNeighbor(codeElevation, offset, level) {
   if (/^10+$/.test(codeElevation) && offset === -1) {
     return "0".padEnd(codeElevation.length, "0");
@@ -13,7 +13,7 @@ function getElevationNeighbor(codeElevation, offset, level) {
     return "1".padEnd(codeElevation.length, "0");
   }
   if (!level) {
-    level = exports.elevationCodeLengthAtLevel.indexOf(codeElevation.length);
+    level = data_1.elevationCodeLengthAtLevel.indexOf(codeElevation.length);
     if (level === -1) {
       throw new Error("编码长度错误！");
     }
@@ -53,7 +53,6 @@ function getElevationNeighbor(codeElevation, offset, level) {
   if (parts.a0 < 0 || parts.a0 > 1) return null;
   return encodeGridCode(parts, level);
 }
-exports.default = getElevationNeighbor;
 // 解析网格码字符串为数值对象
 function parseGridCode(G) {
   if (G.length < 12) {
@@ -93,7 +92,7 @@ function encodeGridCode(parts, level) {
     parts.a10.toString(8),
     parts.a11.toString(8)
   ];
-  return res.join("").substring(0, exports.elevationCodeLengthAtLevel[level]);
+  return res.join("").substring(0, data_1.elevationCodeLengthAtLevel[level]);
 }
 // 各层级处理函数
 function handleA0(parts, delta) {

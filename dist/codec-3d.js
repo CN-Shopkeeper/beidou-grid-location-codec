@@ -15,14 +15,31 @@ class Codec3D {
    * 对大地坐标进行编码
    * @param lngLatEle 大地坐标，类型为 LngLat & number
    * @param r 地球长半轴，默认取6378137m
+   * @param level 编码等级
    * @returns 32位的北斗三维网格位置码
    */
-  static encode(lngLatEle, r = 6378137) {
+  static encode(lngLatEle, r = 6378137, level = 10) {
+    if (level < 1 || level > 10) {
+      throw new Error("Codec3D.encode: 等级应该在1~10之间");
+    }
     // 计算二维网格位置码，20位
-    const code2D = codec_2d_1.default.encode(lngLatEle);
+    const code2D = codec_2d_1.default.encode(lngLatEle, level);
     // 计算高程方向编码，12位
-    const codeEle = this.encodeElevation(lngLatEle.elevation, r);
-    return code2D + codeEle;
+    const codeEle = this.encodeElevation(lngLatEle.elevation, r, level);
+    let codeResult = code2D[0] + codeEle[0];
+    for (let i = 1; i <= level; i++) {
+      // 拼接二维
+      codeResult += code2D.substring(
+        data_1.codeLengthAtLevel[i - 1],
+        data_1.codeLengthAtLevel[i]
+      );
+      // 拼接高程
+      codeResult += codeEle.substring(
+        data_1.elevationCodeLengthAtLevel[i - 1],
+        data_1.elevationCodeLengthAtLevel[i]
+      );
+    }
+    return codeResult;
   }
   /**
    * 对高程进行编码
@@ -72,13 +89,35 @@ class Codec3D {
    * @param r 地球长半轴，默认取6378137m
    * @returns 大地坐标
    */
-  static decode(code, decodeOption = { form: "decimal" }, r = 6378137) {
-    if (code.length !== 32) {
-      throw new Error("编码长度不符合");
+  static decode(
+    code,
+    decodeOption = { form: "decimal" },
+    r = 6378137,
+    level = 10
+  ) {
+    if (level < 1 || level > 10) {
+      throw new Error("Codec3D.decode: 等级应该在1~10之间");
+    }
+    const expectedCodeLength =
+      data_1.codeLengthAtLevel[level] +
+      data_1.elevationCodeLengthAtLevel[level];
+    if (code.length !== expectedCodeLength) {
+      throw new Error("Codec3D.decode: 编码长度不符合");
     }
     // 截取字符串
-    const code2D = code.substring(0, 20);
-    const codeEle = code.substring(20, 32);
+    let code2D = code[0];
+    let codeEle = code[1];
+    for (let i = 1; i <= level; i++) {
+      code2D += code.substring(
+        data_1.codeLengthAtLevel[i - 1] +
+          data_1.elevationCodeLengthAtLevel[i - 1],
+        data_1.codeLengthAtLevel[i] + data_1.elevationCodeLengthAtLevel[i - 1]
+      );
+      codeEle += code.substring(
+        data_1.codeLengthAtLevel[i] + data_1.elevationCodeLengthAtLevel[i - 1],
+        data_1.codeLengthAtLevel[i] + data_1.elevationCodeLengthAtLevel[i]
+      );
+    }
     // 分别解码
     const lngLat = codec_2d_1.default.decode(code2D, decodeOption);
     const elevation = this.decodeElevation(codeEle, r);

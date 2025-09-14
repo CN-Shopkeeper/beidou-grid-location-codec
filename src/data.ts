@@ -40,8 +40,12 @@ const gridCountPole: [number, number][] = [
   [8, 8]
 ];
 
+// 二维编码的长度
 const codeLengthAtLevel = [1, 4, 6, 7, 9, 11, 12, 14, 16, 18, 20];
+// 高程编码的长度
+export const elevationCodeLengthAtLevel = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
+// level=index时的[位数, 进制]
 const elevationParams = [
   [1, 2],
   // 十进制即可得到目标结果
