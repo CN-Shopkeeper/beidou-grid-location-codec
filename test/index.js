@@ -158,3 +158,8 @@ console.log(
   Codec3D.decodeElevation("000301E") - Codec3D.decodeElevation("000301D"),
   Codec3D.decodeElevation("0003020") - Codec3D.decodeElevation("000301E")
 );
+
+// issue #8 获取含E相邻网格与之前编码逻辑不一致
+const neighborCode = Codec3D.getNeighbor("000000E", 1, 5);
+
+console.log("issue #8 获取含E相邻网格与之前编码逻辑不一致 ", neighborCode);

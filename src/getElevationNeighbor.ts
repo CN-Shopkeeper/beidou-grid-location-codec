@@ -158,22 +158,22 @@ function handleA4(parts: Parts, delta: number) {
 
 function handleA5(parts: Parts, delta: number) {
   parts.a5 += delta;
-  if (parts.a5 > 14) {
+  if (parts.a5 > 15) {
     parts.a5 = 0;
     handleA4(parts, 1);
   } else if (parts.a5 < 0) {
-    parts.a5 = 14;
+    parts.a5 = 15;
     handleA4(parts, -1);
   }
 }
 
 function handleA6(parts: Parts, delta: number) {
   parts.a6 += delta;
-  if (parts.a6 > 14) {
+  if (parts.a6 > 15) {
     parts.a6 = 0;
     handleA5(parts, 1);
   } else if (parts.a6 < 0) {
-    parts.a6 = 14;
+    parts.a6 = 15;
     handleA5(parts, -1);
   }
 }

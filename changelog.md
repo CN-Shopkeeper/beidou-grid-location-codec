@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.1.17
+
+- Fix the bug of incorrect encoding of `Codec3D.getNeighbor` when it crosses the fifth and sixth levels
+
 ### v1.1.16
 
 - Add GitHub repository link
